@@ -1,26 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 
-  <head>
+<head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./assets/style.css">
-    <title>JavaScript Quiz Game</title>
-  </head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo&family=Staatliches&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script defer src="script.js"></script>
+    <script defer src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script defer src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
 
-  <body>
-    <header class="Header">
-        
-    </header>
-    <section class="Action-Box">
-        <h2 class="Welcome">Welcome</h2>
-        <p class="Rules">These are the rules</p>
-        <button class="Buttons">START</button>
-    </section>
-    <script src="./assets/script.js"></script>
-  </body>
+    <title>Code Quiz</title>
+</head>
+
+<body>
+    <div id="hs">
+        <a class="high-score" href="scores.html">High Scores</a>
+    </div>
+    <div class="timer">Timer: 0</div>
+
+    <div id="container">
+        <h1 id="header"></h1>
+        <div id="text">
+        </div>
+        <button class="text-white button hide" id="start-button" type="button">Start Game</button>
+        <div id="result"></div>
+    </div>
+</body>
 
 </html>
-
- 
