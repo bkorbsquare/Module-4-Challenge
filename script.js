@@ -155,11 +155,11 @@ function enterScore() {
 
 function timer() {
     timerInterval = setInterval(function() {
-        secondsRemaning--;
-        timerEl.textContent = 'Timer: ' + secondsRemaning;
-        if (secondsRemaning == 0) {
+        secondsRemaining--;
+        timerEl.textContent = 'Timer: ' + secondsRemaining;
+        if (secondsRemaining == 0) {
             clearInterval(timerInterval);
-            timerEl.textContent = 'Timer: ' + secondsRemaning;
+            timerEl.textContent = 'Timer: ' + secondsRemaining;
             enterScore();
         }
     }, 1000);
@@ -175,7 +175,7 @@ function gamestart() {
 };
 
 questionAsker = () => {
-    if (questionArray.length >= questions.length || secondsRemaning == 0) {
+    if (questionArray.length >= questions.length || secondsRemaining == 0) {
         enterScore();
     } else {
         textEl.replaceWith(aList);
