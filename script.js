@@ -1,110 +1,251 @@
-const _question = document.getElementById('question');
-const _options = document.querySelector('.quiz-options');
-const _checkBtn = document.getElementById('check-answer');
-const _playAgainBtn = document.getElementById('play-again');
-const _result = document.getElementById('result');
-const _correctScore = document.getElementById('correct-score');
-const _totalQuestion = document.getElementById('total-question');
+var headerEl = document.getElementById('header');
+var textEl = document.getElementById('text');
+var hideEl = document.querySelector('.hide');
+var startButtonEl = document.getElementById('start-button');
+var highScoreButtonEl = document.getElementById('high-score-button');
+var timerEl = document.querySelector('.timer');
+var aList = document.createElement('ol');
+var result = document.getElementById('result')
+var answerButton1 = document.createElement('button');
+var answerButton2 = document.createElement('button');
+var answerButton3 = document.createElement('button');
+var answerButton4 = document.createElement('button');
+answerButton1.classList.add('answer-button', 'a');
+answerButton2.classList.add('answer-button', 'b');
+answerButton3.classList.add('answer-button', 'c');
+answerButton4.classList.add('answer-button', 'd');
+var score = 0;
+let secondsRemaining = 60;
+var timerInterval;
+var questions = [{
+        question: 'What do you need to make a string in JavaScript?',
+        answers: {
+            a: '< >',
+            b: '" "',
+            c: '( )',
+            d: '{ }'
+        },
+        correctAnswer: 'b'
+    },
+    {
+        question: 'Which of these is a complex data type in JavaScript?',
+        answers: {
+            a: 'Function',
+            b: 'Boolean',
+            c: 'Number',
+            d: 'String'
+        },
+        correctAnswer: 'a'
+    },
+    {
+        question: 'Which of these can NOT be used to set a variable in JavaScript?',
+        answers: {
+            a: 'var',
+            b: 'const',
+            c: 'is',
+            d: 'let'
+        },
+        correctAnswer: 'c'
+    },
+    {
+        question: 'What character is used to select an id in CSS?',
+        answers: {
+            a: '.',
+            b: '#',
+            c: '!',
+            d: '&'
+        },
+        correctAnswer: 'b'
+    },
+    {
+        question: 'What are the three fundamental languages of the modern web?',
+        answers: {
+            a: 'Java, Python, PHP',
+            b: 'Ruby, GO, Rust',
+            c: 'C, C#, C++',
+            d: 'HTML, CSS, JavaScript'
+        },
+        correctAnswer: 'd'
+    },
+    {
+        question: 'What tool is best for debugging?',
+        answers: {
+            a: 'Array.map()',
+            b: 'window.close()',
+            c: 'console.log()',
+            d: 'hammer.smash()'
+        },
+        correctAnswer: 'c'
+    },
+    {
+        question: 'What does CSS stand for?',
+        answers: {
+            a: 'Cascading Style Sheets ',
+            b: 'Corroded Steel Submarines',
+            c: 'Cascading Sub-string Styles',
+            d: 'Creating Successful Subtypes'
+        },
+        correctAnswer: 'a'
+    },
+    {
+        question: 'Name the responsive CSS framework developed at Twitter',
+        answers: {
+            a: 'Flexbox',
+            b: 'Tube top',
+            c: 'Bootstrap',
+            d: 'Chirp'
+        },
+        correctAnswer: 'c'
+    },
+    {
+        question: 'The original version of JavaScript was created in what year?',
+        answers: {
+            a: '1987',
+            b: '1997',
+            c: '2007',
+            d: '2017'
+        },
+        correctAnswer: 'b'
+    },
+    {
+        question: 'An Array can hold how many values?',
+        answers: {
+            a: '0',
+            b: '1',
+            c: '2',
+            d: 'All of the above'
+        },
+        correctAnswer: 'd'
+    },
+];
+var currentQuestion;
+var questionArray = [];
+var i = 0;
+var scoreObjs = JSON.parse(localStorage.getItem('scoreObj')) || [];
 
-let correctAnswer = "", correctScore = askedCount = 0, totalQuestion = 10;
+function enterScore() {
+    clearInterval(timerInterval);
+    timerEl.textContent = '';
+    console.log('GAME OVER');
+    headerEl.textContent = 'Game Over!';
+    divEl = document.createElement('div');
+    scoreEl = document.createElement('score');
+    scoreEl.textContent = `Final Score: ${score}/10`;
+    headerEl.appendChild(divEl);
+    divEl.appendChild(scoreEl);
+    var form = document.createElement('form');
+    var inputBox = document.createElement('input');
+    inputBox.setAttribute('type', 'text');
+    inputBox.setAttribute('placeholder', 'Enter Your Initials');
+    aList.replaceWith(form);
+    form.appendChild(inputBox);
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var object = {
+                name: inputBox.value,
+                score: score
+            }
+        scoreObjs.push(object)
+        localStorage.setItem('scoreObj', JSON.stringify(scoreObjs));
+        if (inputBox.value != '') {
+            window.open('scores.html', '_self');
+        };
+    });
+};
 
-async function loadQuestion(){
-    const APIUrl = 'https://opentdb.com/api.php?amount=1';
-    const result = await fetch(`${APIUrl}`)
-    const data = await result.json();
-    _result.innerHTML = "";
-    showQuestion(data.results[0]);
-}
+function timer() {
+    timerInterval = setInterval(function() {
+        secondsRemaning--;
+        timerEl.textContent = 'Timer: ' + secondsRemaning;
+        if (secondsRemaning == 0) {
+            clearInterval(timerInterval);
+            timerEl.textContent = 'Timer: ' + secondsRemaning;
+            enterScore();
+        }
+    }, 1000);
+};
 
-function eventListeners(){
-    _checkBtn.addEventListener('click', checkAnswer);
-    _playAgainBtn.addEventListener('click', restartQuiz);
-}
+function gamestart() {
+    startButtonEl.classList.add('hide');
+    timer();
+    questions.sort(() => Math.random() - 0.5);
+    console.log('QUESTIONS: ', questions)
+    currentQuestion = questions[i];
+    questionAsker();
+};
 
-document.addEventListener('DOMContentLoaded', function(){
-    loadQuestion();
-    eventListeners();
-    _totalQuestion.textContent = totalQuestion;
-    _correctScore.textContent = correctScore;
+questionAsker = () => {
+    if (questionArray.length >= questions.length || secondsRemaning == 0) {
+        enterScore();
+    } else {
+        textEl.replaceWith(aList);
+        currentQuestion = questions[i];
+        questionArray.push(questions[i]);
+        headerEl.innerHTML = questions[i].question;
+        answerButton1.innerHTML = questions[i].answers.a;
+        answerButton2.innerHTML = questions[i].answers.b;
+        answerButton3.innerHTML = questions[i].answers.c;
+        answerButton4.innerHTML = questions[i].answers.d;
+        aList.appendChild(answerButton1);
+        aList.appendChild(answerButton2);
+        aList.appendChild(answerButton3);
+        aList.appendChild(answerButton4);
+        console.log('value of i: ', i);
+        console.log('CURRENT Q: ', currentQuestion);
+    };
+};
+
+addEventListener('load', () => {
+    if (headerEl) {
+        headerEl.textContent = 'Welcome to the JavaScript Code Quiz'
+    };
+    if (textEl) {
+        textEl.innerHTML = 'You have 60 seconds to complete the quiz. Each wrong answer will decrease your time by 5 seconds. Correct answers will increase your score by one. At the end of the quiz, you may input your initials to save your high score. Good luck and have fun!'
+    };
+    if (hideEl) {
+        hideEl.classList.remove('hide');
+    };
 });
 
-
-function showQuestion(data){
-    _checkBtn.disabled = false;
-    correctAnswer = data.correct_answer;
-    let incorrectAnswer = data.incorrect_answers;
-    let optionsList = incorrectAnswer;
-    optionsList.splice(Math.floor(Math.random() * (incorrectAnswer.length + 1)), 0, correctAnswer);
-    _question.innerHTML = `${data.question} <br> <span class = "category"> ${data.category} </span>`;
-    _options.innerHTML = `
-        ${optionsList.map((option, index) => `
-            <li> ${index + 1}. <span>${option}</span> </li>
-        `).join('')}
-    `;
-    selectOption();
-}
-
-function selectOption(){
-    _options.querySelectorAll('li').forEach(function(option){
-        option.addEventListener('click', function(){
-            if(_options.querySelector('.selected')){
-                const activeOption = _options.querySelector('.selected');
-                activeOption.classList.remove('selected');
-            }
-            option.classList.add('selected');
-        });
-    });
-}
-
-function checkAnswer(){
-    _checkBtn.disabled = true;
-    if(_options.querySelector('.selected')){
-        let selectedAnswer = _options.querySelector('.selected span').textContent;
-        if(selectedAnswer == HTMLDecode(correctAnswer)){
-            correctScore++;
-            _result.innerHTML = `<p><i class = "fas fa-check"></i>Correct Answer!</p>`;
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('answer-button')) {
+        console.log('answer buttons work');
+        if (e.target.classList.contains(currentQuestion.correctAnswer)) {
+            console.log('CORRECT ANSWER WORKING')
+            score++;
+            if (result.classList.contains('wrong')) {
+                result.classList.remove('wrong');
+            };
+            result.classList.add('correct');
+            result.textContent = 'Correct!'
+            setTimeout(function() {
+                result.textContent = ''
+            }, 1000);
+            i++;
+            questionAsker();
         } else {
-            _result.innerHTML = `<p><i class = "fas fa-times"></i>Incorrect Answer!</p> <small><b>Correct Answer: </b>${correctAnswer}</small>`;
-        }
-        checkCount();
-    } else {
-        _result.innerHTML = `<p><i class = "fas fa-question"></i>Please select an option!</p>`;
-        _checkBtn.disabled = false;
+            console.log('WRONG ANSWER WORKING')
+            secondsRemaning -= 5;
+            result.classList.remove('correct');
+            result.classList.add('wrong');
+            result.textContent = 'Wrong!'
+            setTimeout(function() {
+                result.textContent = ''
+            }, 1000);
+            i++;
+            questionAsker();
+        };
     }
-}
+});
 
-function HTMLDecode(textString) {
-    let doc = new DOMParser().parseFromString(textString, "text/html");
-    return doc.documentElement.textContent;
-}
+loadHighScores = () => {
+    window.open('scores.html', '_self');
+};
 
-function checkCount(){
-    askedCount++;
-    setCount();
-    if(askedCount == totalQuestion){
-        setTimeout(function(){
-            console.log("");
-        }, 5000);
-        _result.innerHTML += `<p>Your score is ${correctScore}.</p>`;
-        _playAgainBtn.style.display = "block";
-        _checkBtn.style.display = "none";
-    } else {
-        setTimeout(function(){
-            loadQuestion();
-        }, 300);
-    }
-}
+if (highScoreButtonEl) {
+    highScoreButtonEl.addEventListener('click', loadHighScores);
+};
 
-function setCount(){
-    _totalQuestion.textContent = totalQuestion;
-    _correctScore.textContent = correctScore;
-}
-
-function restartQuiz(){
-    correctScore = askedCount = 0;
-    _playAgainBtn.style.display = "none";
-    _checkBtn.style.display = "block";
-    _checkBtn.disabled = false;
-    setCount();
-    loadQuestion();
-}
+if (startButtonEl) {
+    startButtonEl.addEventListener('click', gamestart);
+};
