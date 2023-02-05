@@ -225,7 +225,7 @@ document.addEventListener('click', function(e) {
             questionAsker();
         } else {
             console.log('WRONG ANSWER WORKING')
-            secondsRemaning -= 5;
+            secondsRemaining -= 5;
             result.classList.remove('correct');
             result.classList.add('wrong');
             result.textContent = 'Wrong!'
